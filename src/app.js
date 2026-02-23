@@ -7,11 +7,15 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+
 app.use("/api/dashboard", require("./dashboard/dashboard.routes"));
+
+
 app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
-  res.json({ message: "Healthcare Backend Running " });
+  res.json({ message: "Healthcare Backend Running" });
 });
 
 module.exports = app;
