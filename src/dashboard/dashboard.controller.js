@@ -1,6 +1,11 @@
 const dashboardService = require("./dashboard.service");
 
-exports.getDashboard = async (req, res) => {
+/*
+========================================
+GET DASHBOARD DATA
+========================================
+*/
+const getDashboardData = async (req, res) => {
   try {
     const identifier = req.user.identifier;
 
@@ -16,4 +21,8 @@ exports.getDashboard = async (req, res) => {
       message: error.message,
     });
   }
+};
+
+module.exports = {
+  getDashboardData,
 };

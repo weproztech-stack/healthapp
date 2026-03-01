@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
 
-const generateToken = (identifier) => {
+const generateToken = (userId) => {
   if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined");
   }
 
   return jwt.sign(
-    { identifier },
+    { id: userId },   // 🔥 MUST BE id (not identifier)
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );

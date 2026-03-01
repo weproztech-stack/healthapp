@@ -1,7 +1,7 @@
 const authService = require("../services/auth.service");
 
 /*
-Send OTP
+   Send OTP
 */
 exports.sendOTP = async (req, res) => {
   try {
@@ -57,43 +57,62 @@ exports.verifyOTP = async (req, res) => {
 };
 
 /*
-  Register User (Optional - Profile Completion)
+  Register User (Protected)
 */
 exports.register = async (req, res) => {
-    try {
-      const identifier = req.user.identifier;
-  
-      const result = await authService.registerUser(identifier, req.body);
-  
-      return res.status(201).json({
-        success: true,
-        ...result,
-      });
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
+  try {
+    const userId = req.user._id;   // 🔥 FIXED (was identifier)
+
+    const result = await authService.registerUser(userId, req.body);
+
+    return res.status(201).json({
+      success: true,
+      ...result,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 /*
    Get Current User
 */
 exports.getMe = async (req, res) => {
-    try {
-      const identifier = req.user.identifier;
-  
-      const user = await authService.getMe(identifier);
-  
-      return res.status(200).json({
-        success: true,
-        user,
-      });
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
+  try {
+    const userId = req.user._id;   // 🔥 FIXED
+
+    const user = await authService.getMe(userId);
+
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+exports.logout = async (req, res) => {
+
+  try {
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+
+  } catch (error) {
+
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+
+  }
+
+};

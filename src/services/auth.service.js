@@ -14,7 +14,6 @@ const generateOTP = () => {
 */
 exports.sendOTP = async (phone) => {
   const otpCode = generateOTP();
-
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
   await Otp.deleteMany({ phone });
@@ -27,12 +26,12 @@ exports.sendOTP = async (phone) => {
 
   return {
     message: "OTP sent successfully",
-    otp: otpCode, // remove later in production
+    otp: otpCode, // remove in production
   };
 };
 
 /*
-   VERIFY OTP → Generate Token Only
+   VERIFY OTP → Find/Create User → Generate Token (FIXED)
 */
 exports.verifyOTP = async (phone, otp) => {
   const existingOTP = await Otp.findOne({ phone });
@@ -51,35 +50,48 @@ exports.verifyOTP = async (phone, otp) => {
 
   await Otp.deleteMany({ phone });
 
-  const token = generateToken(phone);
+  // 🔥 Find or create user
+  let user = await User.findOne({ phone });
+
+  if (!user) {
+    user = await User.create({
+      phone,
+      isVerified: true,
+    });
+  }
+
+  // 🔥 IMPORTANT FIX → generate token using user._id
+  const token = generateToken(user._id);
 
   return {
     message: "OTP verified successfully",
     token,
+    user,
   };
 };
 
 /*
    REGISTER USER (Protected Route)
 */
-exports.registerUser = async (identifier, data) => {
+exports.registerUser = async (userId, data) => {
   const { name, email, role, deviceToken } = data;
 
-  // identifier is phone (from token)
-  const existingUser = await User.findOne({ phone: identifier });
+  const user = await User.findById(userId);
 
-  if (existingUser) {
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  if (user.name) {
     throw new Error("User already registered");
   }
 
-  const user = await User.create({
-    name,
-    phone: identifier,
-    email,
-    role,
-    deviceToken,
-    isVerified: true,
-  });
+  user.name = name;
+  user.email = email;
+  user.role = role;
+  user.deviceToken = deviceToken;
+
+  await user.save();
 
   return {
     message: "User registered successfully",
@@ -90,8 +102,8 @@ exports.registerUser = async (identifier, data) => {
 /*
    GET CURRENT USER
 */
-exports.getMe = async (identifier) => {
-  const user = await User.findOne({ phone: identifier });
+exports.getMe = async (userId) => {
+  const user = await User.findById(userId);
 
   if (!user) {
     throw new Error("User not found");

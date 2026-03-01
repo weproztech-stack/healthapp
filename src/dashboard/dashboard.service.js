@@ -1,6 +1,11 @@
 const User = require("../models/user.model");
 
-exports.getDashboardData = async (identifier) => {
+/*
+========================================
+GET DASHBOARD DATA SERVICE
+========================================
+*/
+const getDashboardData = async (identifier) => {
   // identifier = phone (from JWT)
 
   const user = await User.findOne({ phone: identifier });
@@ -16,6 +21,10 @@ exports.getDashboardData = async (identifier) => {
   // Case 2: Registered user
   return {
     profileCompleted: true,
-    user: user.toSafeObject(),
+    user: user.toSafeObject ? user.toSafeObject() : user,
   };
+};
+
+module.exports = {
+  getDashboardData,
 };

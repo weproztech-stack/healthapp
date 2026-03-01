@@ -1,14 +1,6 @@
 const User = require("../models/user.model");
-
-/*
-========================================
-OLD LOGIC (UNCHANGED)
-========================================
-*/
 exports.updateUserProfile = async (identifier, data) => {
   const { name, email } = data;
-
-  // Validate input
   if (!name && !email) {
     throw new Error("At least one field (name or email) is required");
   }
@@ -29,12 +21,6 @@ exports.updateUserProfile = async (identifier, data) => {
   return user.toSafeObject();
 };
 
-
-/*
-========================================
-NEW LOGIC: UPDATE USER LOCATION
-========================================
-*/
 exports.updateUserLocation = async (identifier, latitude, longitude) => {
 
   // Validate input

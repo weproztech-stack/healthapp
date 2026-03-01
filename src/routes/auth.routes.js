@@ -15,5 +15,5 @@ router.post("/register", protect, authController.register);
 
 // Get Current User (Protected)
 router.get("/me", protect, authController.getMe);
-
+router.post("/logout", protect, authController.logout);
 module.exports = router;
