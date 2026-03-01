@@ -1,75 +1,4 @@
-// const express = require("express");
-// const cors = require("cors");
 
-// const app = express();
-
-// /*
-// ========================================
-// MIDDLEWARE
-// ========================================
-// */
-// app.use(cors());
-// app.use(express.json());
-
-// /*
-// ========================================
-// IMPORT ROUTES
-// ========================================
-// */
-// const authRoutes = require("./routes/auth.routes");
-// const userRoutes = require("./routes/user.routes");
-// const pharmacyRoutes = require("./routes/pharmacy.routes");
-// const profileRoutes = require("./routes/profile.routes");
-// const paymentRoutes = require("./routes/payment.routes");
-// const supportRoutes = require("./routes/support.routes");
-// const appointmentRoutes = require("./routes/appointment.routes");
-// const reportRoutes = require("./routes/report.routes");
-
-// /*
-// ========================================
-// DASHBOARD ROUTES
-// ========================================
-// IMPORTANT: ensure dashboard.routes exports router
-// ========================================
-// */
-// const dashboardRoutes = require("./dashboard/dashboard.routes");
-
-
-// /*
-// ========================================
-// REGISTER ROUTES
-// ========================================
-// */
-// app.use("/api/dashboard", dashboardRoutes);
-// app.use("/api/auth", authRoutes);
-// app.use("/api/user", userRoutes);
-// app.use("/api/pharmacy", pharmacyRoutes);
-// app.use("/api/profile", profileRoutes);
-// app.use("/api/payments", paymentRoutes);
-// app.use("/api/support", supportRoutes);
-// app.use("/api/appointments", appointmentRoutes);
-// app.use("/api/reports", reportRoutes);
-
-
-// /*
-// ========================================
-// HEALTH CHECK ROUTE
-// ========================================
-// */
-// app.get("/", (req, res) => {
-//   res.json({
-//     success: true,
-//     message: "Healthcare Backend Running",
-//   });
-// });
-
-
-// /*
-// ========================================
-// EXPORT APP
-// ========================================
-// */
-// module.exports = app;
 
 const express = require("express");
 const cors = require("cors");
@@ -98,23 +27,23 @@ function safeRequire(path, name) {
     if (typeof mod !== "function") {
       // Some modules export as { router } or { default: router }
       if (mod && typeof mod.router === "function") {
-        console.log(`✅ ${name}: extracted .router`);
+        console.log(` ${name}: extracted .router`);
         return mod.router;
       }
       if (mod && typeof mod.default === "function") {
-        console.log(`✅ ${name}: extracted .default`);
+        console.log(` ${name}: extracted .default`);
         return mod.default;
       }
       console.error(
-        `❌ ${name} did not export a function (got ${typeof mod}). Check module.exports in ${path}`
+        `${name} did not export a function (got ${typeof mod}). Check module.exports in ${path}`
       );
       return null;
     }
 
-    console.log(`✅ ${name}: loaded successfully`);
+    console.log(` ${name}: loaded successfully`);
     return mod;
   } catch (err) {
-    console.error(`❌ ERROR loading ${name}:`, err.message);
+    console.error(` ERROR loading ${name}:`, err.message);
     return null;
   }
 }
@@ -149,23 +78,13 @@ if (supportRoutes)     app.use("/api/support",       supportRoutes);
 if (appointmentRoutes) app.use("/api/appointments",  appointmentRoutes);
 if (reportRoutes)      app.use("/api/reports",       reportRoutes);
 
-/*
-========================================
-HEALTH CHECK ROUTE
-========================================
-*/
+
+
 app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "Healthcare Backend Running ✅",
-  });
+  res.json({ message: "Healthcare Backend Running - NEW VERSION CHECK" });
 });
 
-/*
-========================================
-404 HANDLER
-========================================
-*/
+
 app.use((req, res, next) => {
   res.status(404).json({
     success: false,
@@ -179,7 +98,7 @@ GLOBAL ERROR HANDLER
 ========================================
 */
 app.use((err, req, res, next) => {
-  console.error("🔥 Global Error:", err.stack || err.message);
+  console.error(" Global Error:", err.stack || err.message);
   res.status(err.status || 500).json({
     success: false,
     message: err.message || "Internal Server Error",
