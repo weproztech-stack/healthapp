@@ -1,5 +1,3 @@
-
-
 const express = require("express");
 const cors = require("cors");
 
@@ -14,18 +12,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/*
-========================================
-SAFE REQUIRE FUNCTION
-========================================
-*/
 function safeRequire(path, name) {
   try {
     const mod = require(path);
 
-    // Check if it's a valid Express router/function
     if (typeof mod !== "function") {
-      // Some modules export as { router } or { default: router }
       if (mod && typeof mod.router === "function") {
         console.log(` ${name}: extracted .router`);
         return mod.router;
@@ -53,15 +44,18 @@ function safeRequire(path, name) {
 IMPORT ROUTES WITH DEBUG
 ========================================
 */
-const dashboardRoutes    = safeRequire("./dashboard/dashboard.routes.js", "dashboardRoutes");
-const authRoutes         = safeRequire("./routes/auth.routes.js",         "authRoutes");
-const userRoutes         = safeRequire("./routes/user.routes.js",         "userRoutes");
-const pharmacyRoutes     = safeRequire("./routes/pharmacy.routes.js",     "pharmacyRoutes");
-const profileRoutes      = safeRequire("./routes/profile.routes.js",      "profileRoutes");
-const paymentRoutes      = safeRequire("./routes/payment.routes.js",      "paymentRoutes");
-const supportRoutes      = safeRequire("./routes/support.routes.js",      "supportRoutes");
-const appointmentRoutes  = safeRequire("./routes/appointment.routes.js",  "appointmentRoutes");
-const reportRoutes       = safeRequire("./routes/report.routes.js",       "reportRoutes");
+const dashboardRoutes   = safeRequire("./dashboard/dashboard.routes.js", "dashboardRoutes");
+const authRoutes        = safeRequire("./routes/auth.routes.js",         "authRoutes");
+const userRoutes        = safeRequire("./routes/user.routes.js",         "userRoutes");
+const pharmacyRoutes    = safeRequire("./routes/pharmacy.routes.js",     "pharmacyRoutes");
+const profileRoutes     = safeRequire("./routes/profile.routes.js",      "profileRoutes");
+const paymentRoutes     = safeRequire("./routes/payment.routes.js",      "paymentRoutes");
+const supportRoutes     = safeRequire("./routes/support.routes.js",      "supportRoutes");
+const appointmentRoutes = safeRequire("./routes/appointment.routes.js",  "appointmentRoutes");
+const reportRoutes      = safeRequire("./routes/report.routes.js",       "reportRoutes");
+
+// ✅ Module 2 — Doctor Routes
+const doctorRoutes      = safeRequire("./routes/doctor.routes.js",       "doctorRoutes");
 
 /*
 ========================================
@@ -78,13 +72,23 @@ if (supportRoutes)     app.use("/api/support",       supportRoutes);
 if (appointmentRoutes) app.use("/api/appointments",  appointmentRoutes);
 if (reportRoutes)      app.use("/api/reports",       reportRoutes);
 
+// ✅ Module 2 — Doctor
+if (doctorRoutes)      app.use("/api/dr",            doctorRoutes);
 
-
+/*
+========================================
+BASE ROUTE
+========================================
+*/
 app.get("/", (req, res) => {
   res.json({ message: "Healthcare Backend Running - NEW VERSION CHECK" });
 });
 
-
+/*
+========================================
+404 HANDLER
+========================================
+*/
 app.use((req, res, next) => {
   res.status(404).json({
     success: false,
@@ -105,9 +109,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-/*
-========================================
-EXPORT APP
-========================================
-*/
-module.exports = app; 
+module.exports = app;
