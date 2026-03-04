@@ -1,9 +1,9 @@
 const User = require("../models/user.model");
 
 /*
-========================================
+
 GET DASHBOARD DATA SERVICE
-========================================
+
 */
 const getDashboardData = async (identifier) => {
   // identifier = phone (from JWT)

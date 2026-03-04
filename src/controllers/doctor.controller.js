@@ -5,10 +5,7 @@ const {
   } = require("../services/doctor.service");
   const { successResponse, errorResponse } = require("../utils/responseHandler");
   
-  /**
-   * GET /api/dr/search
-   * Query: latitude, longitude, speciality, radius (optional)
-   */
+
   const searchDoctorsController = async (req, res) => {
     try {
       const { latitude, longitude, speciality, radius } = req.query;
@@ -33,10 +30,6 @@ const {
     }
   };
   
-  /**
-   * GET /api/dr/slots/:id
-   * Query: date (optional, default = today)
-   */
   const getDoctorSlotsController = async (req, res) => {
     try {
       const { id: doctorId } = req.params;
@@ -50,10 +43,7 @@ const {
     }
   };
   
-  /**
-   * POST /api/dr/book
-   * Body: doctorId, mode, isEmergency, appointmentDate, appointmentTime, notes
-   */
+ 
   const bookAppointmentController = async (req, res) => {
     try {
       const userId = req.user._id; // auth middleware se aayega

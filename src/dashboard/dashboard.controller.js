@@ -1,9 +1,9 @@
 const dashboardService = require("./dashboard.service");
 
 /*
-========================================
+
 GET DASHBOARD DATA
-========================================
+
 */
 const getDashboardData = async (req, res) => {
   try {
