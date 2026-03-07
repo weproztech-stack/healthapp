@@ -92,7 +92,7 @@ const paymentSchema = new mongoose.Schema(
 
 
 /*
-Indexes for fast queries
+Indexes for fast queries 
 */
 paymentSchema.index({ user: 1, createdAt: -1 });
 paymentSchema.index({ order: 1 });

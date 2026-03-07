@@ -9,9 +9,9 @@ const {
   updateOrderStatus,
 } = require("../controllers/pharmacy.controller");
 
-// =====================
+
 // ADMIN APIS
-// =====================
+
 
 // POST /api/admin/add-product — Naya product add karo
 router.post("/add-product", protect, addProduct);

@@ -25,7 +25,7 @@ const labSchema = new mongoose.Schema(
       default: "free",
     },
 
-    // ETA jab collector busy ho
+    // ETA jab collector busy hoooooo
     eta: { type: String, default: null },
 
     rating: { type: Number, default: 0 },

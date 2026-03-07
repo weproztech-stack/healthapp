@@ -6,11 +6,7 @@ const protect = require("../middlewares/auth.middleware");
 
 const dashboardController = require("./dashboard.controller");
 
-/*
-========================================
-VALIDATION: ensure controller exists
-========================================
-*/
+
 if (
   !dashboardController ||
   typeof dashboardController.getDashboardData !== "function"
@@ -20,21 +16,12 @@ if (
   );
 }
 
-/*
-========================================
-GET DASHBOARD DATA
-GET /api/dashboard
-========================================
-*/
+
 router.get(
   "/",
   protect,
   dashboardController.getDashboardData
 );
 
-/*
-========================================
-EXPORT ROUTER (CRITICAL)
-========================================
-*/
+
 module.exports = router;
