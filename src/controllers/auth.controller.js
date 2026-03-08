@@ -29,11 +29,11 @@ exports.sendOTP = async (req, res) => {
 };
 
 /*
-   Verify OTP + Login
+   Verify OTP + Login + Register (Ek hi step mein)
 */
 exports.verifyOTP = async (req, res) => {
   try {
-    const { phone, otp } = req.body;
+    const { phone, otp, name, role } = req.body;
 
     if (!phone || !otp) {
       return res.status(400).json({
@@ -42,7 +42,7 @@ exports.verifyOTP = async (req, res) => {
       });
     }
 
-    const result = await authService.verifyOTP(phone, otp);
+    const result = await authService.verifyOTP(phone, otp, name, role);
 
     return res.status(200).json({
       success: true,
@@ -57,11 +57,11 @@ exports.verifyOTP = async (req, res) => {
 };
 
 /*
-  Register User (Protected)
+   Register User (Protected)
 */
 exports.register = async (req, res) => {
   try {
-    const userId = req.user._id;   // 🔥 FIXED (was identifier)
+    const userId = req.user._id;
 
     const result = await authService.registerUser(userId, req.body);
 
@@ -82,7 +82,7 @@ exports.register = async (req, res) => {
 */
 exports.getMe = async (req, res) => {
   try {
-    const userId = req.user._id;   // 🔥 FIXED
+    const userId = req.user._id;
 
     const user = await authService.getMe(userId);
 
@@ -97,22 +97,20 @@ exports.getMe = async (req, res) => {
     });
   }
 };
+
+/*
+   Logout
+*/
 exports.logout = async (req, res) => {
-
   try {
-
     return res.status(200).json({
       success: true,
       message: "Logged out successfully",
     });
-
   } catch (error) {
-
     return res.status(400).json({
       success: false,
       message: error.message,
     });
-
   }
-
 };
