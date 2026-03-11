@@ -14,6 +14,6 @@ initSocket(server);
 connectDB();
 
 server.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`🔌 Socket.io ready`);
+  console.log(` Server running on port ${PORT}`);
+  console.log(` Socket.io ready`);
 });

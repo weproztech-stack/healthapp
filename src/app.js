@@ -3,11 +3,14 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-
+const notificationRoutes = require("./routes/notification.routes");
+app.use("/api/notifications", notificationRoutes);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+// app.js mein add karo
+const bookingRoutes = require("./routes/booking.routes");
+app.use("/api/booking", bookingRoutes);
 function safeRequire(path, name) {
   try {
     const mod = require(path);
@@ -24,7 +27,7 @@ function safeRequire(path, name) {
     return null;
   }
 }
-
+const videoRoutes = safeRequire("./routes/video.routes.js", "videoRoutes");
 const dashboardRoutes   = safeRequire("./dashboard/dashboard.routes.js", "dashboardRoutes");
 const authRoutes        = safeRequire("./routes/auth.routes.js",         "authRoutes");
 const userRoutes        = safeRequire("./routes/user.routes.js",         "userRoutes");
@@ -38,8 +41,9 @@ const doctorRoutes      = safeRequire("./routes/doctor.routes.js",       "doctor
 const physioRoutes      = safeRequire("./routes/physio.routes.js",       "physioRoutes");
 const labRoutes         = safeRequire("./routes/lab.routes.js",          "labRoutes");
 const adminRoutes       = safeRequire("./routes/admin.routes.js",        "adminRoutes");
-const chatRoutes        = safeRequire("./routes/chat.routes.js",         "chatRoutes"); // ✅ NAYA
+const chatRoutes        = safeRequire("./routes/chat.routes.js",         "chatRoutes"); 
 
+if (videoRoutes) app.use("/api/video", videoRoutes);
 if (dashboardRoutes)   app.use("/api/dashboard",    dashboardRoutes);
 if (authRoutes)        app.use("/api/auth",          authRoutes);
 if (userRoutes)        app.use("/api/user",          userRoutes);

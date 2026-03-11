@@ -1,5 +1,5 @@
-
 const ChatMessage = require("../models/chatMessage.model");
+const notify = require("./notification.service"); // ADDED
 
 // Room ID banana - booking se
 const createRoomId = (bookingId) => {
@@ -17,13 +17,20 @@ const saveMessage = async (data) => {
     fileType: data.fileType || "none",
     bookingType: data.bookingType,
   });
+
+  // ✅ ADDED - Receiver ko notification bhejo
+  await notify.notifyNewMessage(
+    data.receiverId,
+    data.senderName || "Someone"
+  );
+
   return message;
 };
 
 // Purani chat history load karna
 const getChatHistory = async (roomId) => {
   const messages = await ChatMessage.find({ roomId })
-    .sort({ createdAt: 1 }) // Purane message pehle
+    .sort({ createdAt: 1 })
     .populate("senderId", "name profilePic")
     .populate("receiverId", "name profilePic");
   return messages;

@@ -6,7 +6,7 @@ const generateToken = (userId) => {
   }
 
   return jwt.sign(
-    { id: userId },   // 🔥 MUST BE id (not identifier)
+    { id: userId },   //  MUST BE id (not identifier)
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );

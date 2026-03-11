@@ -1,6 +1,8 @@
+
 const mongoose = require("mongoose");
 const Order = require("../models/order.model");
 const Address = require("../models/address.model");
+const notify = require("./notification.service"); 
 
 /**
  * Create Order Service (Production Safe)
@@ -8,7 +10,6 @@ const Address = require("../models/address.model");
 const createOrderService = async (userId, orderData) => {
   const { items, shippingAddress, paymentMethod } = orderData;
 
-  // 🔥 Validate shipping address belongs to user
   const address = await Address.findOne({
     _id: shippingAddress,
     user: userId,
@@ -18,7 +19,6 @@ const createOrderService = async (userId, orderData) => {
     throw new Error("Invalid shipping address");
   }
 
-  // 🔥 Recalculate total amount (NEVER trust client total)
   const calculatedTotal = items.reduce((acc, item) => {
     return acc + item.price * item.quantity;
   }, 0);
@@ -30,6 +30,35 @@ const createOrderService = async (userId, orderData) => {
     totalAmount: calculatedTotal,
     paymentMethod,
   });
+
+  //  SAHI JAGAH - Order create hone ke BAAD notification
+  await notify.notifyOrderStatus(
+    userId,
+    "Packed",
+    order._id
+  );
+
+  return order;
+};
+
+/**
+ * Update Order Status + Notification
+ */
+const updateOrderStatusService = async (orderId, status) => {
+  const order = await Order.findByIdAndUpdate(
+    orderId,
+    { status },
+    { new: true }
+  );
+
+  if (!order) throw new Error("Order not found");
+
+  //  Status change hone pe notification
+  await notify.notifyOrderStatus(
+    order.user,
+    status,
+    order._id
+  );
 
   return order;
 };
@@ -47,7 +76,7 @@ const getMyOrdersService = async (userId, page = 1, limit = 10) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .lean(), // 🔥 performance boost
+      .lean(),
 
     Order.countDocuments({ user: userId }),
   ]);
@@ -64,4 +93,5 @@ const getMyOrdersService = async (userId, page = 1, limit = 10) => {
 module.exports = {
   createOrderService,
   getMyOrdersService,
-};
+  updateOrderStatusService, 
+}

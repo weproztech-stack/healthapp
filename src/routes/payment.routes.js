@@ -10,8 +10,14 @@ PAYMENT ROUTES
 ========================================
 */
 
-// Create new payment
+// Create new payment (Razorpay order banao)
 router.post("/", protect, paymentController.createPayment);
+
+// Verify payment (Frontend se signature verify)
+router.post("/verify", protect, paymentController.verifyPayment);
+
+// Process refund
+router.post("/refund/:paymentId", protect, paymentController.processRefund);
 
 // Get current user's payments
 router.get("/my", protect, paymentController.getMyPayments);

@@ -12,14 +12,14 @@ const initSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.log(`✅ User connected: ${socket.id}`);
+    console.log(` User connected: ${socket.id}`);
 
     // ─────────────────────────────────────────
     // 1. ROOM JOIN - Jab user chat screen khole
     // ─────────────────────────────────────────
     socket.on("joinRoom", ({ roomId, userId }) => {
       socket.join(roomId);
-      console.log(`👤 User ${userId} joined room: ${roomId}`);
+      console.log(` User ${userId} joined room: ${roomId}`);
 
       // Dusre user ko batao ke saamne wala aa gaya
       socket.to(roomId).emit("userJoined", { userId });
@@ -48,7 +48,7 @@ const initSocket = (server) => {
         // Dono users ko message bhejo (sender + receiver)
         io.to(data.roomId).emit("newMessage", savedMessage);
 
-        console.log(`💬 Message saved & sent in room: ${data.roomId}`);
+        console.log(` Message saved & sent in room: ${data.roomId}`);
       } catch (error) {
         // Sirf us socket ko error bhejo
         socket.emit("messageError", { error: error.message });
@@ -86,7 +86,7 @@ const initSocket = (server) => {
     // 5. DISCONNECT - Jab user chat band kare
     // ─────────────────────────────────────────
     socket.on("disconnect", () => {
-      console.log(`❌ User disconnected: ${socket.id}`);
+      console.log(` User disconnected: ${socket.id}`);
     });
   });
 

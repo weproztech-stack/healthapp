@@ -83,7 +83,7 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-/* 🔥 Production Indexes */
+/* Production Indexes */
 orderSchema.index({ user: 1, createdAt: -1 });
 
 module.exports = mongoose.model("Order", orderSchema);

@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema(
     },
 
     /*
-    🔥 ADDED: Live Location Field (NEW)
+     ADDED: Live Location Field (NEW)
     This does NOT affect any existing logic
     */
     location: {
@@ -76,7 +76,7 @@ const userSchema = new mongoose.Schema(
 );
 
 /*
-🔥 ADDED: Geo Index (NEW)
+ ADDED: Geo Index (NEW)
 Required for location queries
 */
 userSchema.index({ location: "2dsphere" });

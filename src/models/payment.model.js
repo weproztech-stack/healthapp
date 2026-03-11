@@ -2,66 +2,91 @@ const mongoose = require("mongoose");
 
 const paymentSchema = new mongoose.Schema(
   {
-    /*
-    Link to User
-    */
-    user: {
+    // Link to User
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
       index: true,
     },
 
-    /*
-    Link to Order
-    */
-    order: {
+    // Booking ID (doctor/lab/physio/pharmacy)
+    bookingId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Order",
       required: true,
       index: true,
     },
 
-    /*
-    Payment amount
-    */
+    // Booking Type
+    bookingType: {
+      type: String,
+      enum: ["doctor", "lab", "physio", "pharmacy", "other"],
+      required: true,
+    },
+
+    // Amount
     amount: {
       type: Number,
       required: true,
       min: 0,
     },
 
-    /*
-    Payment method
-    */
+    // Currency
+    currency: {
+      type: String,
+      default: "INR",
+    },
+
+    // Payment Method
     method: {
       type: String,
       enum: ["COD", "ONLINE", "UPI", "CARD", "NETBANKING"],
-      required: true,
+      default: "ONLINE",
     },
 
-    /*
-    Transaction ID (for online payments)
-    */
-    transactionId: {
+    // Razorpay Fields
+    razorpayOrderId: {
       type: String,
       default: null,
       index: true,
     },
 
-    /*
-    Payment status
-    */
-    status: {
+    razorpayPaymentId: {
       type: String,
-      enum: ["PENDING", "SUCCESS", "FAILED", "REFUNDED"],
-      default: "SUCCESS",
+      default: null,
       index: true,
     },
 
-    /*
-    Refund info
-    */
+    razorpaySignature: {
+      type: String,
+      default: null,
+    },
+
+    // Payment Status
+    status: {
+      type: String,
+      enum: ["pending", "completed", "failed"],
+      default: "pending",
+      index: true,
+    },
+
+    paidAt: {
+      type: Date,
+      default: null,
+    },
+
+    // Refund Fields
+    refundStatus: {
+      type: String,
+      enum: ["none", "refunded", "partial"],
+      default: "none",
+    },
+
+    refundId: {
+      type: String,
+      default: null,
+    },
+
     refundAmount: {
       type: Number,
       default: 0,
@@ -72,17 +97,9 @@ const paymentSchema = new mongoose.Schema(
       default: null,
     },
 
-    refundedAt: {
+    refundAt: {
       type: Date,
       default: null,
-    },
-
-    /*
-    Payment timestamp
-    */
-    paidAt: {
-      type: Date,
-      default: Date.now,
     },
   },
   {
@@ -90,13 +107,8 @@ const paymentSchema = new mongoose.Schema(
   }
 );
 
-
-/*
-Indexes for fast queries 
-*/
-paymentSchema.index({ user: 1, createdAt: -1 });
-paymentSchema.index({ order: 1 });
-
+// Indexes
+paymentSchema.index({ userId: 1, createdAt: -1 });
 
 const Payment = mongoose.model("Payment", paymentSchema);
 

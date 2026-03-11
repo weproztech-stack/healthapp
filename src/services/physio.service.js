@@ -1,9 +1,7 @@
 const Physio = require("../models/physio.model");
-const { successResponse, errorResponse } = require("../utils/responseHandler");
+const notify = require("./notification.service");
+const maps = require("./maps.service"); 
 
-/**
- * Search nearby physiotherapists
- */
 const searchPhysios = async ({ latitude, longitude, radiusKm = 10 }) => {
   const radiusInMeters = radiusKm * 1000;
 
@@ -26,9 +24,6 @@ const searchPhysios = async ({ latitude, longitude, radiusKm = 10 }) => {
   return physios;
 };
 
-/**
- * Book a physiotherapy session
- */
 const bookPhysio = async ({
   userId,
   physioId,
@@ -50,7 +45,6 @@ const bookPhysio = async ({
   if (mode === "online" && !physio.isAvailableOnline)
     throw new Error("Physiotherapist not available for online sessions");
 
-  // Home visit ke liye address mandatory
   if (mode === "home" && (!address || !mapLocation)) {
     throw new Error("Address and map location are required for home visits");
   }
@@ -79,13 +73,19 @@ const bookPhysio = async ({
     { path: "user", select: "name email phone" },
   ]);
 
+  await notify.notifyBookingConfirmed(userId, physio.name, appointmentTime);
+
   return populated;
 };
 
-/**
- * Update physio status — On the way
- */
-const updatePhysioStatus = async ({ physioId, status, bookingId }) => {
+const updatePhysioStatus = async ({
+  physioId,
+  status,
+  bookingId,
+  patientId,
+  patientLat,  
+  patientLng,  
+}) => {
   const physio = await Physio.findByIdAndUpdate(
     physioId,
     { status },
@@ -94,12 +94,31 @@ const updatePhysioStatus = async ({ physioId, status, bookingId }) => {
 
   if (!physio) throw new Error("Physiotherapist not found");
 
+  let etaText = "30 mins";
+
+  //  Real ETA Google Maps se
+  if (status === "on_the_way" && physio.location && patientLat && patientLng) {
+    const eta = await maps.calculateETA({
+      originLat: physio.location.coordinates[1],
+      originLng: physio.location.coordinates[0],
+      destLat: patientLat,
+      destLng: patientLng,
+    });
+    etaText = eta.duration;
+  }
+
+  //  Patient ko notify karo real ETA ke saath
+  if (status === "on_the_way" && patientId) {
+    await notify.notifyPartnerOnTheWay(patientId, physio.name, etaText);
+  }
+
   return {
     physioId,
     status: physio.status,
+    eta: etaText,
     message:
       status === "on_the_way"
-        ? "Physiotherapist is on the way!"
+        ? `Physiotherapist is on the way! ETA: ${etaText}`
         : `Status updated to ${status}`,
   };
 };
